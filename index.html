@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#8edfff" />
   <title>Arcade Runner Event</title>
   <link rel="stylesheet" href="style.css" />
 
@@ -23,21 +24,18 @@
 
   <div id="app-container">
     <div id="game-wrapper">
-      <!-- UI HUD -->
       <div id="hud">
-        <div class="stat">Score: <span id="score">0</span></div>
-        <div class="stat">High Score: <span id="high-score">0</span></div>
-        <div class="stat">Coins: <span id="coins">0</span></div>
-        <!-- BUG 1: The pause button just refreshes the page instead of pausing! -->
-        <button onclick="gameRunning = !gameRunning; if(gameRunning) gameLoop();" id="pause-btn" class="hidden">Pause</button>
-        <button id="greedbot-btn" title="Hire GreedBot for 2 coins (Press B)">🤖 Shield (2🪙)</button>
-        <!-- Theme Toggle Button -->
-        <!-- BUG 2: In White Mode, HUD text remains white on white background! -->
-        <button id="theme-btn" title="Toggle Dark / White Mode">☀️ White Mode</button>
-        <!-- PWA Install Button -->
-        <button id="install-btn" class="hidden" title="Install Neon Runner as a Desktop or Mobile App">📥 Install App</button>
-        <!-- Offline Status Badge -->
-        <div id="offline-badge" class="hidden" title="Running in Offline PWA Mode">⚡ Offline</div>
+        <div class="brand-mark"><span class="brand-icon">☀</span><span>Arcade <b>Runner</b></span></div>
+        <div class="stats">
+          <div class="stat score-stat"><span class="stat-icon">🏁</span><span><small>SCORE</small><strong id="score">0</strong></span></div>
+          <div class="stat"><span class="stat-icon">🏆</span><span><small>BEST</small><strong id="high-score">0</strong></span></div>
+          <div class="stat"><span class="stat-icon">🪙</span><span><small>COINS</small><strong id="coins">0</strong></span></div>
+        </div>
+        <div class="hud-actions">
+          <button id="greedbot-btn" class="icon-button" title="Hire GreedBot for 2 coins (Press B)">🤖 2🪙</button>
+          <button id="pause-btn" class="icon-button hidden" aria-label="Pause game" title="Pause game">Ⅱ</button>
+          <button id="theme-btn" class="icon-button" title="Switch to light mode" aria-label="Switch to light mode">☀️</button>
+        </div>
       </div>
 
       <!-- GreedBot Floating Companion -->
@@ -65,28 +63,42 @@
           </div>
         </div>
       </div>
-
-      <!-- Start Screen Overlay -->
       <div id="start-screen" class="overlay">
-        <h1>NEON RUNNER</h1>
-        <p class="controls-hint">Tap screen or press Space / Up to jump</p>
-        <button id="start-btn">Start Game</button>
+        <div class="game-card">
+          <div class="card-mascot" aria-hidden="true">🏃‍♂️</div>
+          <p class="eyebrow">A sunny little adventure</p>
+          <h1>Ready, set,<br /><span>sprint!</span></h1>
+          <p class="card-copy">Leap over the stumps, scoop up coins, and see how far your feet can fly.</p>
+          <button id="start-btn" class="primary-button">Let’s run <span>→</span></button>
+          <p class="control-hint">SPACE or ↑ TO JUMP</p>
+        </div>
       </div>
 
-      <!-- Game Over Overlay -->
       <div id="game-over-screen" class="overlay hidden">
-        <h1>GAME OVER</h1>
-        <button id="restart-btn">Try Again</button>
+        <div class="game-card result-card">
+          <div class="card-mascot" aria-hidden="true">😵‍💫</div>
+          <p class="eyebrow">That was a good run!</p>
+          <h1>Whoopsie<br /><span> daisies.</span></h1>
+          <p class="card-copy">You ran <strong id="final-score">0</strong> points. Ready for a rematch?</p>
+          <button id="restart-btn" class="primary-button">Run it back <span>→</span></button>
+        </div>
       </div>
 
-      <canvas id="gameCanvas" width="800" height="400"></canvas>
+      <div id="pause-screen" class="overlay hidden">
+        <div class="game-card pause-card">
+          <div class="card-mascot" aria-hidden="true">🌼</div>
+          <p class="eyebrow">Take your time</p>
+          <h1>Catch your<br /><span>breath!</span></h1>
+          <button id="resume-btn" class="primary-button">Keep running <span>→</span></button>
+        </div>
+      </div>
+
+      <canvas id="gameCanvas" width="800" height="400" aria-label="Runner game. Press Space or the Up arrow to jump."></canvas>
     </div>
 
-    <!-- Small Roasting & Hint Horse Mascot -->
     <div id="horse-box">
-      <div id="horse-avatar" title="Click me for a roast & hint!">
-        <!-- 8-Bit Pixel Art SVG Horse -->
-        <svg id="horse-svg" viewBox="0 0 64 64" width="70" height="70" shape-rendering="crispEdges">
+      <div id="horse-avatar" title="Click me for a hint!">
+        <svg id="horse-svg" viewBox="0 0 64 64" width="70" height="70" role="img" aria-label="Pixel horse mascot">
           <!-- Mane -->
           <rect x="22" y="12" width="8" height="18" fill="#2d1406" />
           <rect x="18" y="20" width="6" height="14" fill="#2d1406" />
@@ -127,11 +139,11 @@
       </div>
       <div id="horse-dialogue">
         <div class="horse-header">
-          <span class="horse-title">🐴 ROAST HORSE</span>
-          <span class="horse-sub">HINT & ROAST COMPANION</span>
+          <span class="horse-title">Your trail buddy</span>
+          <span class="horse-sub">HINTS FROM THE HERD</span>
         </div>
-        <p id="horse-message">"Neigh! Press Space to jump. Try not to crash into the first block like last time."</p>
-        <button id="horse-poke-btn">Poke for Hint 🎲</button>
+        <p id="horse-message">“Press Space or ↑ to jump. Those stumps look friendlier from above!”</p>
+        <button id="horse-poke-btn">Need a hint? <span>↗</span></button>
       </div>
     </div>
   </div>

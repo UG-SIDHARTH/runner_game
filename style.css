@@ -1,13 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap');
+
+:root {
+  font-family: 'DM Sans', sans-serif;
+  color: #233750;
+  background: #f5f8ee;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --ink: #233750;
+  --muted: #718197;
+  --coral: #ff765e;
+  --yellow: #ffd35a;
+  --blue: #70d7f4;
+  --card: #fffefa;
+}
+
+* { box-sizing: border-box; }
 
 body {
-  margin: 0;
-  background-color: #111;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  min-width: 320px;
   min-height: 100dvh;
+  margin: 0;
+  padding: 34px 20px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(ellipse at 12% 12%, rgba(255, 211, 90, .28), transparent 28%),
+    radial-gradient(ellipse at 88% 82%, rgba(112, 215, 244, .22), transparent 32%),
+    #f5f8ee;
   font-family: 'Press Start 2P', cursive;
   color: white;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -19,72 +38,143 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  width: 100%;
-  max-width: 800px;
+  gap: 20px;
+  width: min(100%, 900px);
 }
 
 #game-wrapper {
   position: relative;
-  width: min(100%, 800px);
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-  transition: box-shadow 0.3s ease;
+  width: 100%;
+  overflow: hidden;
+  border: 7px solid var(--card);
+  border-radius: 28px;
+  background: #9de7f5;
+  box-shadow: 0 24px 60px rgba(58, 91, 108, .18), 0 4px 0 rgba(35, 55, 80, .07);
 }
 
 #hud {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  text-shadow: 2px 2px 0 #000;
   z-index: 10;
-  flex-wrap: wrap;
-  gap: 8px;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 76px;
+  padding: 13px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ink);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .73));
+  border-bottom: 1px solid rgba(255, 255, 255, .6);
+  backdrop-filter: blur(12px);
 }
 
-#hud .stat {
-  display: inline-flex;
+.brand-mark, .stats, .stat, .hud-actions {
+  display: flex;
   align-items: center;
 }
+
+.brand-mark {
+  gap: 9px;
+  flex-shrink: 0;
+  font: 600 15px 'Fredoka', sans-serif;
+  letter-spacing: -.3px;
+}
+
+.brand-mark b { color: #f26d55; }
+
+.brand-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: #ffbd46;
+  font-size: 21px;
+  box-shadow: 0 3px 0 #f1a42b;
+}
+
+.stats { gap: 9px; }
+
+.stat {
+  min-width: 84px;
+  gap: 8px;
+  padding: 7px 11px;
+  border: 1px solid rgba(88, 118, 139, .12);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .72);
+}
+
+.stat-icon { font-size: 17px; }
+.stat small, .stat strong { display: block; }
+.stat small { color: var(--muted); font-size: 8px; font-weight: 800; letter-spacing: 1px; }
+.stat strong { margin-top: 1px; font: 700 14px 'Fredoka', sans-serif; }
+.hud-actions { gap: 7px; }
 
 button {
-  font-family: inherit;
-  background: #ff0055;
-  color: white;
-  border: 3px solid #fff;
-  padding: 8px 12px;
+  border: 0;
+  font: inherit;
   cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, background .2s ease;
   text-transform: uppercase;
   font-size: 10px;
   transition: background 0.2s ease, transform 0.1s ease;
   touch-action: manipulation;
 }
 
-button:hover {
-  background: #ffaa00;
-  transform: translateY(-1px);
+button:hover { transform: translateY(-2px); }
+button:active { transform: translateY(1px); }
+button:focus-visible { outline: 3px solid #347bd5; outline-offset: 3px; }
+
+.icon-button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(88, 118, 139, .14);
+  border-radius: 12px;
+  color: var(--ink);
+  background: #fff;
+  font-size: 17px;
 }
 
-button:active {
-  transform: translateY(1px);
+.icon-button:hover { background: #fff5d8; }
+
+.hidden { display: none !important; }
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #a9eaff;
 }
 
 .overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  z-index: 20;
+  inset: 0;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 20;
+  padding: 88px 20px 20px;
+  background: rgba(52, 94, 120, .15);
+  backdrop-filter: blur(3px);
+}
+
+.game-card {
+  width: min(100%, 390px);
+  padding: 27px 32px 24px;
+  border: 1px solid rgba(255, 255, 255, .8);
+  border-radius: 27px;
+  text-align: center;
+  background: rgba(255, 254, 250, .96);
+  box-shadow: 0 16px 45px rgba(44, 75, 96, .18);
+  animation: cardIn .35s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .hidden {
@@ -102,167 +192,161 @@ canvas {
   transition: background 0.3s ease;
 }
 
-/* =========================================================
-   WHITE (LIGHT) MODE THEME
-   BUG 2: In White Mode, #hud text color is set to white (#ffffff)
-          against light background, making HUD stats invisible!
-   To FIX BUG 2:
-   Change `color: #ffffff;` to `color: #111827;` and restore text-shadow
-   ========================================================= */
-body.white-mode {
-  background-color: #e5e7eb;
+.card-mascot {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 10px;
+  display: grid;
+  place-items: center;
+  border-radius: 23px;
+  background: #fff0bf;
+  font-size: 39px;
+  animation: mascotBob 2.4s ease-in-out infinite;
 }
 
-body.white-mode #hud {
-  color: #ffffff; /* BUG 2: White text on light background! */
-  text-shadow: none; /* Without shadow, score and coins vanish! */
+@keyframes mascotBob {
+  50% { transform: translateY(-5px) rotate(3deg); }
 }
 
-body.white-mode #game-wrapper {
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+.eyebrow {
+  margin: 0 0 8px;
+  color: #ea795f;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
-body.white-mode canvas {
-  background: linear-gradient(to bottom, #dbeafe, #93c5fd, #60a5fa);
+.game-card h1 {
+  margin: 0;
+  color: var(--ink);
+  font: 700 clamp(32px, 5vw, 45px)/.98 'Fredoka', sans-serif;
+  letter-spacing: -1.5px;
 }
 
-body.white-mode button {
-  background: #2563eb;
-  border-color: #1e3a8a;
-  color: #ffffff;
+.game-card h1 span { color: #f1785d; }
+
+.card-copy {
+  max-width: 290px;
+  margin: 13px auto 18px;
+  color: #718197;
+  font-size: 13px;
+  line-height: 1.55;
 }
 
-body.white-mode button:hover {
-  background: #1d4ed8;
+.card-copy strong { color: var(--ink); }
+
+.primary-button {
+  min-width: 190px;
+  padding: 13px 20px;
+  border-radius: 14px;
+  color: #fff;
+  background: var(--coral);
+  box-shadow: 0 4px 0 #dc5947, 0 8px 18px rgba(255, 118, 94, .24);
+  font: 700 15px 'Fredoka', sans-serif;
 }
 
-body.white-mode .overlay {
-  background: rgba(255, 255, 255, 0.9);
-  color: #111827;
-}
+.primary-button:hover { background: #f76651; box-shadow: 0 5px 0 #dc5947, 0 10px 20px rgba(255, 118, 94, .3); }
+.primary-button span { margin-left: 9px; font-size: 19px; vertical-align: -1px; }
+.control-hint { margin: 15px 0 0; color: #9aa8b4; font-size: 9px; font-weight: 800; letter-spacing: 1.2px; }
+.pause-card { width: min(100%, 340px); }
 
-body.white-mode .overlay h1 {
-  color: #111827;
-}
-
-/* =========================================================
-   SARCASTIC ROAST & HINT HORSE MASCOT
-   ========================================================= */
 #horse-box {
+  width: 100%;
+  padding: 13px 18px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  width: 100%;
-  background: #1a1a2e;
-  border: 4px solid #00ffff;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-  padding: 12px 16px;
-  box-sizing: border-box;
-  border-radius: 4px;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-body.white-mode #horse-box {
-  background: #ffffff;
-  border: 4px solid #3b82f6;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
-  color: #1f2937;
+  gap: 15px;
+  border: 1px solid rgba(101, 144, 156, .15);
+  border-radius: 21px;
+  color: var(--ink);
+  background: rgba(255, 254, 250, .88);
+  box-shadow: 0 10px 28px rgba(58, 91, 108, .08);
 }
 
 #horse-avatar {
   flex-shrink: 0;
   cursor: pointer;
-  transition: transform 0.2s ease;
-  user-select: none;
+  transition: transform .2s ease;
 }
 
-#horse-avatar:hover {
-  transform: scale(1.1) rotate(-4deg);
-}
-
-#horse-avatar.bouncing {
-  animation: horseHop 0.5s ease;
-}
+#horse-avatar:hover { transform: rotate(-5deg) scale(1.06); }
+#horse-avatar.bouncing { animation: horseHop .5s ease; }
 
 @keyframes horseHop {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(6deg); }
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-9px) rotate(5deg); }
 }
 
-#horse-dialogue {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.horse-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.horse-title {
-  font-size: 11px;
-  color: #ffaa00;
-  letter-spacing: 1px;
-}
-
-body.white-mode .horse-title {
-  color: #d97706;
-}
-
-.horse-sub {
-  font-size: 8px;
-  color: #00ffff;
-  background: rgba(0, 255, 255, 0.15);
-  padding: 3px 6px;
-  border-radius: 3px;
-}
-
-body.white-mode .horse-sub {
-  color: #2563eb;
-  background: rgba(37, 99, 235, 0.12);
-}
-
-#horse-message {
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.6;
-  color: #ffffff;
-  min-height: 36px;
-  display: flex;
-  align-items: center;
-  transition: color 0.3s ease;
-}
-
-body.white-mode #horse-message {
-  color: #1f2937;
-}
+#horse-dialogue { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.horse-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.horse-title { color: #de7950; font: 700 14px 'Fredoka', sans-serif; }
+.horse-sub { padding: 4px 7px; border-radius: 20px; color: #438d9c; background: #e7f8f6; font-size: 8px; font-weight: 800; letter-spacing: .7px; }
+#horse-message { min-height: 20px; margin: 0; color: #62758a; font-size: 12px; line-height: 1.5; }
 
 #horse-poke-btn {
   align-self: flex-start;
-  font-size: 9px;
-  padding: 6px 10px;
-  background: #ffaa00;
-  border: 2px solid #fff;
-  cursor: pointer;
-  color: #000;
-  font-weight: bold;
+  padding: 0;
+  color: #438d9c;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 800;
 }
 
-#horse-poke-btn:hover {
-  background: #ff5500;
-  color: #fff;
+#horse-poke-btn:hover { color: #e46f54; }
+#horse-poke-btn span { margin-left: 3px; }
+
+body.white-mode {
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 12% 12%, rgba(255, 211, 90, .34), transparent 28%),
+    radial-gradient(ellipse at 88% 82%, rgba(112, 215, 244, .27), transparent 32%),
+    #f9fbf5;
 }
 
-body.white-mode #horse-poke-btn {
-  background: #f59e0b;
-  border-color: #d97706;
-  color: #fff;
+body.white-mode #game-wrapper { box-shadow: 0 24px 60px rgba(58, 91, 108, .14), 0 4px 0 rgba(35, 55, 80, .07); }
+
+@media (max-width: 650px) {
+  body { padding: 18px 12px; }
+  #app-container { gap: 13px; }
+  #game-wrapper { border-width: 5px; border-radius: 20px; }
+  canvas { height: clamp(280px, 75vw, 400px); }
+  #hud { min-height: 62px; padding: 9px 10px; gap: 6px; }
+  .brand-mark { gap: 6px; font-size: 12px; }
+  .brand-icon { width: 29px; height: 29px; border-radius: 10px; font-size: 18px; }
+  .stats { gap: 4px; }
+  .stat { min-width: 0; gap: 4px; padding: 5px 6px; border-radius: 10px; }
+  .stat-icon { font-size: 13px; }
+  .stat small { font-size: 6px; letter-spacing: .5px; }
+  .stat strong { font-size: 11px; }
+  .icon-button { width: 31px; height: 31px; border-radius: 10px; font-size: 14px; }
+  .hud-actions { gap: 4px; }
+  .overlay { padding: 60px 8px 8px; }
+  .game-card { width: min(100%, 340px); padding: 9px 16px; border-radius: 22px; }
+  .card-mascot { width: 40px; height: 40px; margin-bottom: 4px; border-radius: 15px; font-size: 24px; }
+  .eyebrow { margin-bottom: 4px; font-size: 9px; }
+  .game-card h1 { font-size: clamp(27px, 7vw, 34px); }
+  .card-copy { margin: 5px auto 8px; font-size: 10px; line-height: 1.35; }
+  .primary-button { min-width: 160px; padding: 9px 16px; font-size: 14px; }
+  .control-hint { display: none; }
+  #horse-box { gap: 9px; padding: 9px 10px; border-radius: 16px; }
+  #horse-svg { width: 55px; height: 55px; }
+  .horse-title { font-size: 12px; }
+  .horse-sub { font-size: 7px; }
+  #horse-message { font-size: 10px; }
+}
+
+@media (max-width: 400px) {
+  .brand-mark { font-size: 0; }
+  .brand-icon { font-size: 18px; }
+  .stat { padding: 5px; }
+  .stat-icon { display: none; }
+  .stats { gap: 3px; }
+  #hud { padding-inline: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
 /* =========================================================
