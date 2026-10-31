@@ -1,25 +1,18 @@
 # Pull Request Information
 
-The changes have been pushed and the Pull Request is open:
-
-- **Pull Request**: [#15 feat: port game to Progressive Web App (PWA) with offline support and installability](https://github.com/FOSSCLUB-LBSITW/runner_game/pull/15)
+- **Pull Request Title**: `feat: add greedy helper robot companion charging 2 coins for shield assistance`
 - **Base Repository**: `FOSSCLUB-LBSITW/runner_game:main`
-- **Head Branch**: `UG-SIDHARTH:feature/progressive-web-app`
-- **Linked Issue**: Closes #13
-
----
-
-### PR Title:
-```text
-feat: port game to Progressive Web App (PWA) with offline support and installability
-```
+- **Head Branch**: `UG-SIDHARTH:feature/16-greedy-helper-robot`
+- **Linked Issue**: Closes #16
 
 ---
 
 ### PR Summary:
-- Ported Runner Game to a full Progressive Web App (PWA).
-- Added `manifest.json` with standalone display, app icons, and shortcuts.
-- Implemented `sw.js` with offline caching and Stale-While-Revalidate strategy.
-- Added in-HUD PWA install flow and dynamic offline status indicator.
-- Added mobile touch/tap controls for jumping.
-- Linked and closes Issue #13.
+- Added quirky interactive mini robot companion ("GreedBot") with pixel-art SVG sprite, blinking LED eyes, and hovering thruster animations.
+- Implemented coin economy perk: GreedBot strictly demands a fee of 2 gold coins to grant a temporary 5-second invincibility shield against obstacles.
+- If player has < 2 coins or refuses: GreedBot rejects with witty robotic banter and a metallic buzz sound.
+- Added retro 8-bit synthesizer bleeps/boops via Web Audio API.
+- Integrated comedic commentary hooks with the Roast Horse mascot for bribery, broke rejections, shield rescues, and refusal events.
+- Styled responsive HUD button and hovering cyber dialogue box matching both Dark and White mode palettes.
+- Bumper service worker cache version to `neon-runner-v2`.
+

@@ -15,6 +15,7 @@ let player = { x: 50, y: groundY, width: 30, height: 50, yVel: 0, jumping: false
 let obstacle = { x: 800, y: groundY + 10, width: 40, height: 40, speed: 6 };
 let clouds = [ { x: 200, y: 50 }, { x: 600, y: 100 }, { x: 1000, y: 70 } ];
 let coins = [ { x: 400, y: 200, active: true }, { x: 900, y: 150, active: true } ];
+let shieldActive = false, shieldTimeLeft = 0, botDismissTimeout = null, lastBotAppearance = 0;
 
 function jump() {
     if (gameRunning && !player.jumping) {
@@ -24,6 +25,7 @@ function jump() {
 }
 
 document.addEventListener("keydown", (e) => {
+    if (e.code === "KeyB") hireGreedBot();
     if (e.code === "Space" || e.code === "ArrowUp") {
         const startScreen = document.getElementById("start-screen");
         const gameOverScreen = document.getElementById("game-over-screen");
@@ -66,6 +68,9 @@ function startGame() {
     player.yVel = 0;
     player.jumping = false;
     player.width = 30; // reset player width in case it shrank
+    shieldActive = false;
+    shieldTimeLeft = 0;
+    hideGreedBot();
     
     gameRunning = true;
     triggerHorse("start");
@@ -74,6 +79,8 @@ function startGame() {
 
 function gameOver() {
     gameRunning = false;
+    shieldActive = false;
+    hideGreedBot();
     document.getElementById("pause-btn").classList.add("hidden");
     document.getElementById("game-over-screen").classList.remove("hidden");
     
@@ -121,13 +128,11 @@ function gameLoop() {
             coin.active = true;
         }
 
-        // BUG: Deducts coins and shrinks player on collision!
         if (coin.active && player.x < coin.x + 20 && player.x + player.width > coin.x &&
             player.y < coin.y + 20 && player.y + player.height > coin.y) {
             
-            coinsCollected -= 1; 
-            player.width -= 5;
-            coins.splice(0, 1); 
+            coinsCollected += 1; 
+            coin.active = false;
             document.getElementById("coins").innerText = coinsCollected;
             triggerHorse("coin");
         }
@@ -138,13 +143,33 @@ function gameLoop() {
         player.x + player.width > obstacle.x &&
         player.y < obstacle.y + obstacle.height &&
         player.y + player.height > obstacle.y) {
-        gameOver();
-        return;
+        if (shieldActive) {
+            obstacle.x = canvas.width + Math.random() * 300;
+            playBotSound("shield");
+            triggerHorse("greedbot-saved");
+        } else {
+            gameOver();
+            return;
+        }
+    }
+
+    if (shieldActive) {
+        shieldTimeLeft -= 1 / 60;
+        if (shieldTimeLeft <= 0) {
+            shieldActive = false;
+            showGreedBot("Shield EXPIRED! Need another? Pay up!", 3000);
+        }
     }
 
     score += 0.05;
     const currentScore = Math.floor(score);
     document.getElementById("score").innerText = currentScore;
+
+    // Robot appearance intervals
+    if (currentScore > 0 && currentScore % 30 === 0 && currentScore !== lastBotAppearance && !shieldActive) {
+        lastBotAppearance = currentScore;
+        showGreedBot("Need a 5s Shield? That'll be 2 🪙!");
+    }
 
     // Milestone celebration roasts
     if ((currentScore === 25 || currentScore === 50 || currentScore === 100) && currentScore !== lastMilestone) {
@@ -188,6 +213,18 @@ function draw() {
             ctx.arc(coin.x, coin.y, 10, 0, Math.PI * 2);
             ctx.fill();
         }
+    }
+
+    // Draw Shield if Active
+    if (shieldActive) {
+        ctx.save();
+        ctx.strokeStyle = `hsl(${(Date.now() / 4) % 360}, 100%, 65%)`;
+        ctx.lineWidth = 3;
+        ctx.setLineDash([6, 3]);
+        ctx.beginPath();
+        ctx.arc(player.x + player.width / 2, player.y + player.height / 2, player.height * 0.7, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
     }
 }
 
@@ -262,6 +299,21 @@ const horseRoasts = {
     installed: [
         "🐴 Roasted: You actually installed this PWA onto your device?! Bold choice. Now you can get roasted on the go!",
         "🐴 Roasted: Neon Runner is now pinned to your device. May your jump timing improve with permanent residency."
+    ],
+    "greedbot-bribe": [
+        "🐴 Roasted: You bribed a mini robot for a shield?! Real runners dodge with their eyes closed!",
+        "🐴 Roasted: Capitalism at its finest. GreedBot is laughing all the way to the cyber bank."
+    ],
+    "greedbot-broke": [
+        "🐴 Roasted: BZZT! Broke detected! Even a greedy 8-bit bot refused to associate with you.",
+        "🐴 Roasted: Can't even afford 2 coins?! GreedBot just laughed in binary at your empty wallet."
+    ],
+    "greedbot-saved": [
+        "🐴 Roasted: CLANG! That shield just saved your pixel bacon! Don't get cocky, time is ticking.",
+        "🐴 Roasted: Money really does buy life! GreedBot's shield absorbed that hit for you."
+    ],
+    "greedbot-refused": [
+        "🐴 Roasted: Refused to pay GreedBot? I admire the cheapness, but your survival odds just cratered."
     ]
 };
 
@@ -382,3 +434,99 @@ window.addEventListener("DOMContentLoaded", () => {
         startGame();
     }
 });
+
+// =========================================================
+// GREEDY HELPER ROBOT (GREEDBOT) COMPANION
+// =========================================================
+const greedbotBox = document.getElementById("greedbot-box");
+const greedbotMsg = document.getElementById("greedbot-msg");
+const greedbotBtn = document.getElementById("greedbot-btn");
+const greedbotPayBtn = document.getElementById("greedbot-pay-btn");
+const greedbotDismissBtn = document.getElementById("greedbot-dismiss-btn");
+const greedbotAvatar = document.getElementById("greedbot-avatar");
+
+function playBotSound(type) {
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        const audioCtx = new AudioContextClass();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const t = audioCtx.currentTime;
+        if (type === "success") {
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(587, t);
+            osc.frequency.setValueAtTime(880, t + 0.08);
+            osc.frequency.setValueAtTime(1174, t + 0.16);
+            gain.gain.setValueAtTime(0.08, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+            osc.start(t);
+            osc.stop(t + 0.3);
+        } else if (type === "reject") {
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(120, t);
+            osc.frequency.linearRampToValueAtTime(60, t + 0.25);
+            gain.gain.setValueAtTime(0.09, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+            osc.start(t);
+            osc.stop(t + 0.26);
+        } else if (type === "shield") {
+            osc.type = "square";
+            osc.frequency.setValueAtTime(300, t);
+            osc.frequency.exponentialRampToValueAtTime(900, t + 0.15);
+            gain.gain.setValueAtTime(0.08, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+            osc.start(t);
+            osc.stop(t + 0.16);
+        }
+    } catch (e) {}
+}
+
+function showGreedBot(text, autoHideMs) {
+    if (!greedbotBox || !greedbotMsg) return;
+    greedbotMsg.innerText = text;
+    greedbotBox.classList.remove("hidden");
+    clearTimeout(botDismissTimeout);
+    if (autoHideMs) {
+        botDismissTimeout = setTimeout(hideGreedBot, autoHideMs);
+    }
+}
+
+function hideGreedBot() {
+    if (greedbotBox) greedbotBox.classList.add("hidden");
+    clearTimeout(botDismissTimeout);
+}
+
+function hireGreedBot() {
+    if (shieldActive) {
+        showGreedBot("Shield already active! Stop wasting my time!", 2500);
+        return;
+    }
+    if (coinsCollected >= 2) {
+        coinsCollected -= 2;
+        document.getElementById("coins").innerText = coinsCollected;
+        shieldActive = true;
+        shieldTimeLeft = 5;
+        playBotSound("success");
+        showGreedBot("BEEP BOOP! Shield ON! 5s invulnerability!", 3000);
+        triggerHorse("greedbot-bribe");
+    } else {
+        playBotSound("reject");
+        showGreedBot("BZZT! No coins, no help! You get nothing!", 3000);
+        triggerHorse("greedbot-broke");
+    }
+}
+
+if (greedbotBtn) greedbotBtn.addEventListener("click", hireGreedBot);
+if (greedbotPayBtn) greedbotPayBtn.addEventListener("click", hireGreedBot);
+if (greedbotAvatar) greedbotAvatar.addEventListener("click", hireGreedBot);
+if (greedbotDismissBtn) {
+    greedbotDismissBtn.addEventListener("click", () => {
+        playBotSound("reject");
+        showGreedBot("BZZT! Cheapskate! Good luck surviving alone!", 2000);
+        triggerHorse("greedbot-refused");
+    });
+}
+

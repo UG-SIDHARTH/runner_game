@@ -338,3 +338,54 @@ body.white-mode #install-btn:hover {
     box-shadow: 0 0 10px #ef4444;
   }
 }
+
+/* =========================================================
+   GREEDY HELPER ROBOT (GREEDBOT) COMPANION
+   ========================================================= */
+#greedbot-btn {
+  background: #00ffcc;
+  color: #05060a;
+  border-color: #ffd700;
+  font-weight: bold;
+}
+#greedbot-btn:hover { background: #ffd700; }
+body.white-mode #greedbot-btn {
+  background: #0284c7;
+  border-color: #f59e0b;
+  color: #fff;
+}
+#greedbot-box {
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 3px solid #00ffcc;
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.4);
+  padding: 8px 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 15;
+  max-width: 270px;
+  animation: botHover 2s infinite ease-in-out;
+}
+body.white-mode #greedbot-box {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #0284c7;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.3);
+  color: #0f172a;
+}
+#greedbot-avatar { cursor: pointer; flex-shrink: 0; }
+.bot-eye { animation: botBlink 2.5s infinite; }
+@keyframes botBlink { 0%, 90%, 100% { opacity: 1; } 95% { opacity: 0; } }
+.bot-thruster { animation: botFlame 0.2s infinite alternate; transform-origin: 16px 23px; }
+@keyframes botFlame { 0% { transform: scaleY(0.9); } 100% { transform: scaleY(1.3); } }
+@keyframes botHover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+#greedbot-dialogue { display: flex; flex-direction: column; gap: 6px; }
+#greedbot-msg { font-size: 8px; line-height: 1.4; color: #ffd700; }
+body.white-mode #greedbot-msg { color: #d97706; }
+.greedbot-actions { display: flex; gap: 6px; }
+#greedbot-pay-btn { background: #10b981; border: 2px solid #fff; padding: 4px 6px; font-size: 8px; }
+#greedbot-dismiss-btn { background: #6b7280; border: 2px solid #fff; padding: 4px 6px; font-size: 8px; }
+

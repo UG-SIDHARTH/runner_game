@@ -1,5 +1,5 @@
 // Neon Runner - Service Worker
-const CACHE_NAME = "neon-runner-v1";
+const CACHE_NAME = "neon-runner-v2";
 const STATIC_ASSETS = [
   "./",
   "./index.html",
